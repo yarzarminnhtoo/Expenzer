@@ -3,14 +3,16 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import { Button } from "react-bootstrap";
 import QuestionDialog from "./QuestionDialog";
-import { useState } from "react";
-
+import { useState, useContext } from "react";
+import { user } from "../models/user";
+import { useUser } from "../models/userProvider";
 interface props {
-  name: string;
   onLogout: () => void;
   onNavigate: (path: string) => void;
 }
-function NavMenu({ name, onLogout, onNavigate }: props) {
+function NavMenu({ onLogout, onNavigate }: props) {
+  const { user, setUser } = useUser();
+
   const [showQuestion, setShowQuestion] = useState(false);
   return (
     <>
@@ -56,7 +58,7 @@ function NavMenu({ name, onLogout, onNavigate }: props) {
             </Nav>
 
             <Navbar.Text style={{ margin: "0 10px 0 0" }}>
-              <b>{name}</b>
+              <b>{user?.name}</b>
             </Navbar.Text>
 
             <Button

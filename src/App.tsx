@@ -1,5 +1,5 @@
 import "bootstrap/dist/css/bootstrap.css";
-import { Route, Routes, useNavigate, useParams } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import Home from "./pages/Home";
 import NavMenu from "./components/NavMenu";
 import Component from "./pages/Component";
@@ -11,14 +11,14 @@ import { AxiosResponse } from "axios";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import { account } from "./models/account";
-
+import { useUser } from "./models/userProvider";
+import { user } from "./models/user";
 function App() {
   const navigate = useNavigate();
   const [showLoginError, setShowLoginError] = useState(false);
   const [showSignupError, setshowSignupError] = useState(false);
   const [authorized, setAuthorized] = useState(false);
-  const [name, setName] = useState("");
-
+  const { user, setUser } = useUser();
   function clearTokenCookie() {
     document.cookie = `jwtToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
     document.cookie = `account_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
@@ -41,7 +41,13 @@ function App() {
         if (status === 200) {
           Cookies.set("jwtToken", data.token, { expires: 7 });
           Cookies.set("account_id", data.account_id, { expires: 7 });
-          setName(data.account_name);
+          const userObject: user = {
+            name: "John Doe",
+            username: "johndoe123",
+            password: "secretpassword",
+            email: "johndoe@example.com",
+          };
+          setUser(userObject);
           setAuthorized(true);
           navigate("/home");
         }
@@ -56,7 +62,6 @@ function App() {
     <>
       {authorized && (
         <NavMenu
-          name={name}
           onNavigate={(path) => {
             console.log(path);
             navigate(path);

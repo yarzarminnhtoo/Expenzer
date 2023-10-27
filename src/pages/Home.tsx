@@ -29,6 +29,7 @@ function HomePage({ isAuthorized }: props) {
   const account_id = Cookies.get("account_id");
   useEffect(() => {
     const controller = new AbortController();
+    //get expenses
     apiClient
       .get<expense[]>(`/api/expenses/gets/${account_id}`, {
         signal: controller.signal,
