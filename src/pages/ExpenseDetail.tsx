@@ -33,7 +33,7 @@ function ExpenseDetailPage() {
 
     const controller = new AbortController();
     apiClient
-      .get<expense_detail[]>(`/api/expenses/gets/detail/${id}`, {
+      .get<expense_detail[]>(`/api/expenses/details/${id}`, {
         signal: controller.signal,
       })
       .then(({ data }: AxiosResponse) => {
@@ -65,7 +65,7 @@ function ExpenseDetailPage() {
               });
           } else {
             apiClient
-              .put(`/api/expenses/update_detail/${id}`, e)
+              .put(`/api/expenses/update/detail/${id}`, e)
               .then(({ data }: AxiosResponse) => {
                 const updatedDetails = expense_details.map((detail) =>
                   detail.id === e.id ? e : detail
@@ -121,7 +121,7 @@ function ExpenseDetailPage() {
             onDeleted={(uniqueid) => {
               apiClient
                 .delete(
-                  `api/expenses/delete_detail?parent_id=${id}&id=${uniqueid}`
+                  `api/expenses/delete/detail/${uniqueid}?parent_id=${id}`
                 )
                 .then(({ data }: AxiosResponse) => {
                   setExpense_details(

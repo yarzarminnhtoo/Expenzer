@@ -11,14 +11,15 @@ import { AxiosResponse } from "axios";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import { account } from "./models/account";
-import { useUser } from "./models/userProvider";
-import { user } from "./models/user";
+import { UserContext } from "./contexts/UserContext";
+
 function App() {
   const navigate = useNavigate();
   const [showLoginError, setShowLoginError] = useState(false);
   const [showSignupError, setshowSignupError] = useState(false);
   const [authorized, setAuthorized] = useState(false);
-  const { user, setUser } = useUser();
+
+  const [username, setUsername] = useState<string | null>("");
   function clearTokenCookie() {
     document.cookie = `jwtToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
     document.cookie = `account_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
@@ -41,13 +42,9 @@ function App() {
         if (status === 200) {
           Cookies.set("jwtToken", data.token, { expires: 7 });
           Cookies.set("account_id", data.account_id, { expires: 7 });
-          const userObject: user = {
-            name: "John Doe",
-            username: "johndoe123",
-            password: "secretpassword",
-            email: "johndoe@example.com",
-          };
-          setUser(userObject);
+          console.log(data.account_name);
+          setUsername(data.account_name);
+          //setUser(userObject);
           setAuthorized(true);
           navigate("/home");
         }
@@ -60,74 +57,75 @@ function App() {
 
   return (
     <>
-      {authorized && (
-        <NavMenu
-          onNavigate={(path) => {
-            console.log(path);
-            navigate(path);
-          }}
-          onLogout={() => {
-            clearTokenCookie();
-            setAuthorized(false);
-            navigate("/");
-          }}
-        />
-      )}
+      <UserContext.Provider value={{ username, setUsername }}>
+        {authorized && (
+          <NavMenu
+            onNavigate={(path) => {
+              navigate(path);
+            }}
+            onLogout={() => {
+              clearTokenCookie();
+              setAuthorized(false);
+              navigate("/");
+            }}
+          />
+        )}
 
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <Login
-              onSignup={() => navigate("/signup")}
-              showLoginError={showLoginError}
-              onAuthenticate={handleAuthentication}
-            />
-          }
-        />
-        <Route
-          path="/signup"
-          element={
-            <Signup
-              showError={showSignupError}
-              onLogin={() => navigate("/")}
-              onSignup={(e) => {
-                apiClient
-                  .post("/api/account/register", e)
-                  .then(({ status, data }: AxiosResponse) => {
-                    if (status === 200) {
-                      navigate("/");
-                    }
-                  })
-                  .catch((err) => {
-                    if (err instanceof CanceledError) return;
-                    setshowSignupError(true);
-                  });
-              }}
-            />
-          }
-        />
-        <Route
-          path="/home"
-          element={
-            <div>
-              <br />
-              <Home isAuthorized={authorized} />
-            </div>
-          }
-        />
-        <Route path="/component" element={<Component />} />
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <Login
+                onSignup={() => navigate("/signup")}
+                showLoginError={showLoginError}
+                onAuthenticate={handleAuthentication}
+              />
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              <Signup
+                showError={showSignupError}
+                onLogin={() => navigate("/")}
+                onSignup={(e) => {
+                  apiClient
+                    .post("/api/account/register", e)
+                    .then(({ status, data }: AxiosResponse) => {
+                      if (status === 200) {
+                        navigate("/");
+                      }
+                    })
+                    .catch((err) => {
+                      if (err instanceof CanceledError) return;
+                      setshowSignupError(true);
+                    });
+                }}
+              />
+            }
+          />
+          <Route
+            path="/home"
+            element={
+              <div>
+                <br />
+                <Home isAuthorized={authorized} />
+              </div>
+            }
+          />
+          <Route path="/component" element={<Component />} />
 
-        <Route
-          path="/expensedetail/:id"
-          element={
-            <div>
-              <br />
-              <ExpenseDetail />
-            </div>
-          }
-        />
-      </Routes>
+          <Route
+            path="/expensedetail/:id"
+            element={
+              <div>
+                <br />
+                <ExpenseDetail />
+              </div>
+            }
+          />
+        </Routes>
+      </UserContext.Provider>
     </>
   );
 }

@@ -46,8 +46,6 @@ function ExpenseDetailForm({
       event.preventDefault();
       event.stopPropagation();
     } else {
-      console.log("sub");
-      console.log(formData);
       formData && onSubmit(formData);
       event.preventDefault();
     }

@@ -24,6 +24,15 @@ const FormatHelper = {
     };
     return date.toLocaleString("en-US", options);
   },
+  getCustomShortDate: (date: Date) => {
+    const options: Intl.DateTimeFormatOptions = {
+      
+      month: "long",
+      day: "2-digit",
+      
+    };
+    return date.toLocaleString("en-US", options);
+  },
   getCurrencyNumber: (value: number) => {
     return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   },

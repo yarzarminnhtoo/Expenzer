@@ -4,15 +4,14 @@ import Navbar from "react-bootstrap/Navbar";
 import { Button } from "react-bootstrap";
 import QuestionDialog from "./QuestionDialog";
 import { useState, useContext } from "react";
-import { user } from "../models/user";
-import { useUser } from "../models/userProvider";
+import { useUserContext } from "../contexts/UserContext";
 interface props {
   onLogout: () => void;
   onNavigate: (path: string) => void;
 }
 function NavMenu({ onLogout, onNavigate }: props) {
-  const { user, setUser } = useUser();
-
+  //deconstruct it from context to get or set
+  const { username, setUsername } = useUserContext();
   const [showQuestion, setShowQuestion] = useState(false);
   return (
     <>
@@ -58,7 +57,7 @@ function NavMenu({ onLogout, onNavigate }: props) {
             </Nav>
 
             <Navbar.Text style={{ margin: "0 10px 0 0" }}>
-              <b>{user?.name}</b>
+              <b>{username}</b>
             </Navbar.Text>
 
             <Button

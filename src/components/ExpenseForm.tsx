@@ -14,6 +14,7 @@ interface props {
 
 function ExpenseForm({ info, showed, onClosed, onSubmit }: props) {
   const [formData, setFormData] = useState<expense>({
+    account_id: "",
     amount: 0,
     date: new Date(),
     note: "",

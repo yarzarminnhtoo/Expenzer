@@ -10,6 +10,8 @@ import QuestionDialog from "../components/QuestionDialog";
 import dateFormat from "dateformat";
 import FormatHelper from "../helpers/FormatHelper";
 import Cookies from "js-cookie";
+//use context to get and set value
+//import { useUserContext } from "../contexts/UserContext";
 interface props {
   isAuthorized: boolean;
 }
@@ -26,12 +28,15 @@ function HomePage({ isAuthorized }: props) {
   const [showQuestion, setShowQuestion] = useState(false);
   const [show, setShow] = useState(false);
   const [expenses, setExpenses] = useState<expense[]>([]);
+  //deconstruct it from context to get or set value
+  // const { username, setUsername } = useUserContext();
+
   const account_id = Cookies.get("account_id");
   useEffect(() => {
     const controller = new AbortController();
     //get expenses
     apiClient
-      .get<expense[]>(`/api/expenses/gets/${account_id}`, {
+      .get<expense[]>(`/api/expenses/${account_id}`, {
         signal: controller.signal,
       })
       .then(({ data }: AxiosResponse) => {
@@ -90,7 +95,6 @@ function HomePage({ isAuthorized }: props) {
         }}
         onSubmit={(e) => {
           e.account_id = account_id ? account_id : "";
-          console.log(e);
           setShow(false);
           apiClient
             .post("/api/expenses/create", e)
@@ -102,6 +106,13 @@ function HomePage({ isAuthorized }: props) {
         }}
       />
       <Container style={{ height: "90vh" }}>
+        {/* <Button
+          onClick={() => {
+            setUsername("a");
+          }}
+        >
+          Test
+        </Button> */}
         <div className="d-flex justify-content-between">
           <div className=" align-items-center p-3">
             <h3>
