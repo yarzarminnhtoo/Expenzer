@@ -21,6 +21,7 @@ function ExpenseForm({ info, showed, onClosed, onSubmit }: props) {
     id: "",
     details: [],
   });
+  //testing
   const [validated, setValidated] = useState(false);
   const handleDateChange = (e: Date) => {
     setDate(e);
